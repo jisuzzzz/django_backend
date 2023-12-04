@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Django</h1>
+
+    <button id="new-button">New Sudoku</button>
+    <button id="solve-button">Solve Sudoku</button>
+    <div id="result"></div>
+
+    <script>
+     // 'arr'라는 빈 배열 변수를 선언
+    let arr = [];
+
+    // 'solve-button'이라는 ID를 가진 HTML 요소(버튼)에 클릭 이벤트 리스너를 추가
+    document.getElementById('solve-button').addEventListener('click', function() {
+
+        // 클릭 이벤트 발생 시, '/solve/' 주소로 POST 요청을 보냄
+        fetch('/solve/', {
+            method: 'POST',  // POST 방식으로 요청
+            headers: {
+                // 요청 헤더에 'Content-Type'을 'application/json'으로 설정 (전송 데이터 형식을 JSON으로 알림)
+                'Content-Type': 'application/json'
+            },
+            // 요청 본문에 'arr' 변수의 값을 JSON 형식으로 변환하여 전송
+            body:JSON.stringify({ arr : arr })
+        })
+        .then(response => response.json())  // 응답을 JSON 형식으로 파싱
+        .then(data => {
+            // 파싱된 응답 데이터 중 'result' 값을 'result'라는 ID를 가진 HTML 요소의 텍스트로 표시
+            document.getElementById('result').innerText = data.result;
+        });
+    });
+    document.getElementById('new-button').addEventListener('click', function() {
+        fetch('/new/', {
+            method: 'GET',
+        })
+        .then(response => response.json())
+        .then(data => {
+            arr = data.arr;
+            document.getElementById('result').innerText = data.arr;
+        });
+    });
+    </script>
+</body>
+</html>
+
